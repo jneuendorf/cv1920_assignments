@@ -1,0 +1,71 @@
+Man braucht nur die augmentierten Matritzen
+
+def _initialize_weight_matrices(self) -> Tuple[List[np.ndarray]]:
+    matrices = []
+    prev_dim_size = self.size_in
+    for layer_size in self.hidden_layers:
+        matrix = np.random.randn(prev_dim_size + 1, layer_size) * np.sqrt(2.0 / (prev_dim_size + 1 + layer_size))
+        matrices.append(matrix)
+        prev_dim_size = layer_size
+
+    matrix = np.random.randn(prev_dim_size + 1, self.size_out) * np.sqrt(2.0 / (prev_dim_size + 1 + self.size_out))
+    matrices.append(matrix)
+    return matrices
+Du hast die X geshuffled aber die y so gelassen. Dadurch hast du mit den falschen labels trainiert.
+
+mit np.random.permutation() geht es:
+
+permutation = np.random.permutation(len(X))
+weights = self._initialize_weight_matrices()
+num_batches = math.ceil(N / batch_size)
+for epoch in range(num_epochs):
+    for batch_index in range(num_batches):
+        batch_index = permutation[batch_index:(batch_index + batch_size)]
+        batch_X = X[batch_index]
+        batch_y = y[batch_index]
+
+        corrections = [
+            np.zeros(matrix.shape)
+            for matrix in weights
+        ]
+        for i, x in enumerate(batch_X):
+            new_corrections = self.backpropagation(
+                weights,
+                *self.feed_forward(weights, x, batch_y[i]),
+                learning_constant=learning_constant,
+            )
+            corrections = self._sum_matrix_lists(
+                corrections,
+                new_corrections
+            )
+
+        weights = self._sum_matrix_lists(
+                weights,
+                corrections
+            )
+    if callable(callback):
+        callback(weights)
+
+self.weights = weights
+mit batch_size 128 und 0.001 Lernrate:epoch=0 num_batches=57 score=0.3618159374571389
+epoch=1  num_batches=57 score=0.5280482786997668
+epoch=2  num_batches=57 score=0.6215882594980112
+epoch=3  num_batches=57 score=0.6748045535591826
+epoch=4  num_batches=57 score=0.7130709093402825
+epoch=5  num_batches=57 score=0.7402276779591277
+epoch=6  num_batches=57 score=0.7580578795775613
+epoch=7  num_batches=57 score=0.7765738581813194
+epoch=8  num_batches=57 score=0.7907008640790015
+epoch=9  num_batches=57 score=0.8009875188588671
+epoch=10 num_batches=57 score=0.8078452887121108
+epoch=11 num_batches=57 score=0.8160746125360033
+epoch=12 num_batches=57 score=0.8199149636538198
+epoch=13 num_batches=57 score=0.8243039363598957
+epoch=14 num_batches=57 score=0.8284185982718419
+epoch=15 num_batches=57 score=0.8323961047867233
+epoch=16 num_batches=57 score=0.8355506789192154
+epoch=17 num_batches=57 score=0.8377451652722535
+epoch=18 num_batches=57 score=0.8414483609930051
+epoch=19 num_batches=57 score=0.8429570703607187
+
+Nicht überragend, aber es passiert etwas
