@@ -4,3 +4,4 @@ images/cheetah_data_mini
 venv
 .ipynb_checkpoints/
 .DS_Store
+__pycache__

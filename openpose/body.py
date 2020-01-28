@@ -29,6 +29,7 @@ class Body(object):
         thre2 = 0.05
         multiplier = [x * boxsize / oriImg.shape[0] for x in scale_search]
         heatmap_avg = np.zeros((oriImg.shape[0], oriImg.shape[1], 19))
+        # 38 == number of pairs
         paf_avg = np.zeros((oriImg.shape[0], oriImg.shape[1], 38))
 
         for m in range(len(multiplier)):
@@ -204,7 +205,7 @@ class Body(object):
 
         # subset: n*20 array, 0-17 is the index in candidate, 18 is the total score, 19 is the total parts
         # candidate: x, y, score, id
-        return candidate, subset
+        return candidate, subset, heatmap_avg, paf_avg, connection_all
 
 if __name__ == "__main__":
     body_estimation = Body('../model/body_pose_model.pth')
