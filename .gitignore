@@ -1,7 +1,9 @@
-MNIST
-images/faces
-images/cheetah_data_mini
-venv
-.ipynb_checkpoints/
-.DS_Store
 __pycache__
+.DS_Store
+.ipynb_checkpoints/
+*.pth
+images/cheetah_data_mini
+images/faces
+MNIST
+model
+venv
